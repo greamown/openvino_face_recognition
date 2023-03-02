@@ -132,7 +132,6 @@ class AsyncPipeline:
     def get_result(self, id):
         result = self.get_raw_result(id)
         if result:
-            print(result)
             raw_result, meta, preprocess_meta = result
             return self.model.postprocess(raw_result, preprocess_meta), meta
         return None

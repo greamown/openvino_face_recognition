@@ -60,6 +60,7 @@ class Detection():
             results = orignal_results[-1]
             results.update({"output_transform": self.output_transform})
             results.update({"detections":orignal_results[0][0]})
+            self.next_frame_id_to_show += 1
             return results
         
         return orignal_results
