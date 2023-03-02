@@ -1,0 +1,5 @@
+__pycache__/
+*/__pycache__/
+*.log
+Ultra-Light-Fast-Generic-Face-Detector-1MB/*
+keras-facenet/*
