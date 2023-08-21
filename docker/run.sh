@@ -61,7 +61,7 @@ sudo apt-get install -qy boxes > /dev/null 2>&1
 docker_image="openvino_face_cv:latest"
 mount_camera=""
 set_vision=""
-command="bash"
+command=""
 workspace="/workspace"
 docker_name="openvino_face_cv"
 # ---------------------------------------------------------
@@ -86,6 +86,18 @@ do
 done
 
 # ---------------------------------------------------------
+# Check face.db 
+FILE="./database/face.db"
+
+if [[ -f $FILE ]]; then
+  echo "$FILE does exist"
+  command="bash"
+else
+  echo "$FILE doesn't exist"
+  command="./database/install_sql.sh && bash"
+fi
+
+# ---------------------------------------------------------
 title="\n\
 MODE:  ${mode}\n\
 DOCKER: ${docker_name} \n\
@@ -107,7 +119,7 @@ ${mount_camera} \
 ${set_vision} \
 ${docker_image} \"${command}\""
 
-echo ""
+echo -e "${BLUE}"
 echo -e "Command: ${docker_cmd}"
-echo ""
+echo -e "${NC}"
 bash -c "${docker_cmd}"

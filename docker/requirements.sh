@@ -24,8 +24,8 @@ echo "Workspace is ${ROOT}"
 printstr "$(date +"%T") Install OpenCV " 
 apt-get install -qqy ffmpeg libsm6 libxext6 #> /dev/null 2>&1
 
-# colorlog
+# Colorlog
 printstr "$(date +"%T") Pip install colorlog " 
 pip3 install colorlog
 
-printstr "Done${REST}"
+printstr "Done"
