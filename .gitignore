@@ -3,3 +3,7 @@ __pycache__/
 *.log
 Ultra-Light-Fast-Generic-Face-Detector-1MB/*
 keras-facenet/*
+*.png
+*.jpg
+*.jpeg
+*.db
