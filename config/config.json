@@ -1,7 +1,8 @@
 {
     "det_model":"models/face_detection/version-RFB-320.xml",
-    "landmark_model":"",
-    "source":"./data/10.jpg",
+    "landmark_model":"models/facenet/facenet_keras.xml",
+    "source":"data/feature/Tom_Hiddleston3.jpg",
+    "init_folder_path":"data/original/",
     "loop":true,
     "device":"CPU",
     "threshold":0.5
