@@ -145,7 +145,6 @@ class FaceDetection(Model):
         picked_box_probs[:, 3] *= height
         return picked_box_probs[:, :4].astype(np.int32), np.array(picked_labels), picked_box_probs[:, 4]
 
-
 class ColorPalette:
     def __init__(self, n, rng=None):
         assert n > 0
@@ -185,3 +184,24 @@ class ColorPalette:
 
     def __len__(self):
         return len(self.palette)
+    
+def draw_box(info, draw_key=False, palette=None):
+    class_id = 0
+    frame = info["frame"]
+    output_transform = info['output_transform']
+    pieces = []
+    if info["detections"] is not None and info["detections"] != []:
+        if output_transform != None:
+            frame = output_transform.resize(frame)
+        boxes = info["detections"][0]
+        for box in boxes:
+            xmin, ymin, xmax, ymax = output_transform.scale([box[0], box[1], box[2], box[3]])
+            if draw_key:
+                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), palette[class_id], 2)
+            else:
+                pieces.append(frame[ymin:ymax,xmin:xmax])
+
+    if draw_key:
+        return frame
+    else:
+        return pieces

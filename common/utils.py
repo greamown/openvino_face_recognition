@@ -20,6 +20,11 @@ import json
 import logging
 import os
 
+ALLOWED_EXTENSIONS                  =   {   "label":['txt', 'xml', 'json',
+                                                        "TXT", "XML", "JSON"],
+                                            "image":['png', 'jpg', 'jpeg', 'bmp', 
+                                                        "PNG", "JPG", "JPEG", "BMP"]
+                                        }
 
 class Detection:
     def __init__(self, xmin, ymin, xmax, ymax, score, id):
@@ -90,7 +95,6 @@ def load_labels(label_file):
         labels_map = [x.strip() for x in f]
     return labels_map
 
-
 def resize_image(image, size, keep_aspect_ratio=False):
     if not keep_aspect_ratio:
         resized_frame = cv2.resize(image, size)
@@ -99,7 +103,6 @@ def resize_image(image, size, keep_aspect_ratio=False):
         scale = min(size[1] / h, size[0] / w)
         resized_frame = cv2.resize(image, None, fx=scale, fy=scale)
     return resized_frame
-
 
 def resize_image_letterbox(image, size):
     ih, iw = image.shape[0:2]
@@ -173,3 +176,6 @@ def read_json(path:str):
     else:
         logging.error("This path of .json does not exist:{}".format(path))
 
+def write_json(path:str, content:dict):
+	with open(path, "w+") as file:
+		json.dump(content, file, indent=4)
