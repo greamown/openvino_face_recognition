@@ -5,8 +5,8 @@ from common import read_json
 
 DB_PATH  = read_json("./database/db_config.json")["DB_PATH"]
 INIT_DATA  =  {
-                "feature": "name TEXT, \
-                            features TEXT, \
+                "features": "name TEXT, \
+                            feature TEXT, \
                             create_time TEXT"
              }
 

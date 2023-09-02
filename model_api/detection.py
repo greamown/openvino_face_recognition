@@ -195,7 +195,8 @@ def draw_box(info, draw_key=False, palette=None):
             frame = output_transform.resize(frame)
         boxes = info["detections"][0]
         for box in boxes:
-            xmin, ymin, xmax, ymax = output_transform.scale([box[0], box[1], box[2], box[3]])
+            axis = output_transform.scale([box[0], box[1], box[2], box[3]])
+            xmin, ymin, xmax, ymax =edge_process(axis, frame.shape[:-1])
             if draw_key:
                 cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), palette[class_id], 2)
             else:
@@ -205,3 +206,15 @@ def draw_box(info, draw_key=False, palette=None):
         return frame
     else:
         return pieces
+    
+def edge_process(axis, shape):
+    if axis[0] < 0 :
+        axis[0] = 0
+    if axis[1] < 0:
+        axis[1] = 0
+    if axis[2] > shape[1]:
+        axis[2] = shape[1]
+    if axis[3] > shape[0]:
+        axis[3] = shape[0]
+    
+    return axis

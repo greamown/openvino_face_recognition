@@ -5,5 +5,5 @@
     "init_folder_path":"data/original/",
     "loop":true,
     "device":"CPU",
-    "threshold":0.5
+    "threshold":0.8
 }

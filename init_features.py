@@ -30,7 +30,7 @@ def main(args):
     # Catch feature and save
     for path in image_list:
         path_list = os.path.split(path)
-        main_path = path_list[0]
+        # main_path = path_list[0]
         img_name = path_list[-1]
         # Read image
         frame = cv2.imread(path)
@@ -46,15 +46,19 @@ def main(args):
                 feature = str(info["detections"][0][0].tolist())
                 create_time = str(time.time())
                 # Check data isnot at db
-                exist_str = """ SELECT EXISTS( SELECT * FROM feature WHERE name=\'{}\') """.format(filename)
+                exist_str = """ SELECT EXISTS( SELECT * FROM features WHERE name=\'{}\') """.format(filename)
                 exist_result = execute_db(exist_str, update=False)
                 if not exist_result[0][0]:
                     # Save feature at db
-                    error_info = insert_table_cmd("feature", "name, features, create_time", "\'{}\', \'{}\', \'{}\'".format(filename, feature, create_time))
+                    error_info = insert_table_cmd("features", "name, feature, create_time", "\'{}\', \'{}\', \'{}\'".format(filename, feature, create_time))
                     if error_info:
                         logging.error(error_info[1])
                 else:
                     logging.warning("The data is exist:[{}]".format(filename))
+            else:
+                logging.error("No generate feature:[{}]".format(path))
+        else:
+            logging.error("No detect face:[{}]".format(path))
 
         if image_list.index(path) == len(image_list)-1:
             logging.info("Finished to collect features.")
