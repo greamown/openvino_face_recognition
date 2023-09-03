@@ -3,15 +3,16 @@ import cv2, logging
 import numpy as np
 import random
 from time import perf_counter
-from common.pipelines import get_user_config, AsyncPipeline
+from common.pipelines import get_user_config, AsyncPipeline, Normal
 from common.utils import load_labels, resize_image, OutputTransform
 from openvino.inference_engine import IECore
 
 class Recognition():
-    def __init__(self, param):
+    def __init__(self, param, initial=False):
         self.next_frame_id = 0
         self.next_frame_id_to_show = 0
         self.param = param
+        self.initial = initial
 
     def load_model(self):
         # ---------------------------Step 1. Initialize inference engine core--------------------------------------------------
@@ -24,31 +25,29 @@ class Recognition():
         # Get device relative info for inference 
         plugin_config = get_user_config( self.param['device'], flags_nstreams="", flags_nthreads=None)
         # Initialize Pipeline(for inference)
-        self.detector_pipeline = AsyncPipeline(ie, self.model, plugin_config,
-                                                    device=self.param['device'], max_num_requests=0)
+        if self.initial:
+            self.detector_pipeline = Normal(ie, self.model, plugin_config,
+                                                device=self.param['device'])
+        else:
+            self.detector_pipeline = AsyncPipeline(ie, self.model, plugin_config,
+                                                        device=self.param['device'], max_num_requests=0)
 
     def inference(self, frame):
-        # Check pipeline is ready & setting output_shape & inference
-        if self.detector_pipeline.is_ready():
-            start_time = perf_counter()
-            if frame is None:
-                if self.next_frame_id == 0:
-                    raise ValueError("Can't read an image from the input")
-                raise ValueError("Can't read an image")
-            if self.next_frame_id == 0:
-                # Compute rate from setting output shape and input images shape 
-                self.output_transform = OutputTransform(frame.shape[:2], None)  
-            # Submit for inference
-            self.detector_pipeline.submit_data(frame, self.next_frame_id, {'frame': frame, 'start_time': start_time})
-            self.next_frame_id += 1
+        if self.initial:
+            self.submit_action(frame)
         else:
-            # Wait for empty request
-            self.detector_pipeline.await_any()
+            # Check pipeline is ready & setting output_shape & inference
+            if self.detector_pipeline.is_ready():
+                self.submit_action(frame)
+            else:
+                # Wait for empty request
+                self.detector_pipeline.await_any()
 
-        if self.detector_pipeline.callback_exceptions:
-            raise self.detector_pipeline.callback_exceptions[0]
+            if self.detector_pipeline.callback_exceptions:
+                raise self.detector_pipeline.callback_exceptions[0]
         # Process all completed requests
         orignal_results = self.detector_pipeline.get_result(self.next_frame_id_to_show)
+
         if orignal_results:
             results = {}
             results["detections"] = orignal_results
@@ -56,7 +55,20 @@ class Recognition():
             self.next_frame_id_to_show += 1
             return results
         return orignal_results
-    
+
+    def submit_action(self, frame):
+        start_time = perf_counter()
+        if frame is None:
+            if self.next_frame_id == 0:
+                raise ValueError("Can't read an image from the input")
+            raise ValueError("Can't read an image")
+        if self.next_frame_id == 0:
+            # Compute rate from setting output shape and input images shape 
+            self.output_transform = OutputTransform(frame.shape[:2], None)  
+        # Submit for inference
+        self.detector_pipeline.submit_data(frame, self.next_frame_id, {'frame': frame, 'start_time': start_time})
+        self.next_frame_id += 1
+
 class Facenet(Model):
     def __init__(self, ie, param):
         self.model_path = param['landmark_model']

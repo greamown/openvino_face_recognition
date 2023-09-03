@@ -16,9 +16,9 @@ def main(args):
     # Setting config
     config = read_json(args.config)
     # Loading model
-    det = Detection(config)
+    det = Detection(config, initial = True)
     det.load_model() 
-    rec = Recognition(config)
+    rec = Recognition(config,  initial = True)
     rec.load_model()
     # Initial db
     init_db()
@@ -27,6 +27,7 @@ def main(args):
     for name in ALLOWED_EXTENSIONS["image"]:
         img_path = glob.glob(os.path.join(config['init_folder_path'],"*.{}".format(name)))
         image_list += img_path
+
     # Catch feature and save
     for path in image_list:
         path_list = os.path.split(path)
