@@ -1,5 +1,6 @@
 from .detection import Detection, FaceDetection, ColorPalette, draw_box
 from .recognition import Recognition, Facenet
+from .clustering import euclidean_distance, calcu_distance
 
 __all__ = [
     "Detection",
@@ -7,5 +8,7 @@ __all__ = [
     "ColorPalette",
     "Recognition",
     "Facenet",  
-    "draw_box"
+    "draw_box",
+    "euclidean_distance",
+    "calcu_distance"
 ]

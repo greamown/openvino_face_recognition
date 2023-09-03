@@ -1,4 +1,5 @@
-import sqlite3, logging, sys
+import sqlite3, logging, sys, ast
+import numpy as np
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]/"common"))
 from common import read_json
@@ -9,6 +10,7 @@ INIT_DATA  =  {
                             feature TEXT, \
                             create_time TEXT"
              }
+OBJ_FEATURE = { "name" : [], "feature": []}
 
 # Connect
 def connect_db():
@@ -96,3 +98,14 @@ def update_data_table_cmd(table_name:str, values:str, select:str):
                 """.format(table_name, values, select)
     info_db = execute_db(commands, True)
     return info_db
+
+def read_feature_db():
+    global OBJ_FEATURE
+    command = """SELECT * FROM features"""
+    info_db = execute_db(command, False)
+    # Prevent error 
+    if "error" in info_db:
+        return info_db
+    for info in info_db:
+        OBJ_FEATURE["name"].append(info[0])
+        OBJ_FEATURE["feature"].append(np.array(ast.literal_eval(info[1])))

@@ -196,7 +196,7 @@ class ColorPalette:
     def __len__(self):
         return len(self.palette)
     
-def draw_box(info, draw_key=False, palette=None):
+def draw_box(info, draw_key=False, palette=None, names=[]):
     class_id = 0
     frame = info["frame"]
     output_transform = info['output_transform']
@@ -205,11 +205,14 @@ def draw_box(info, draw_key=False, palette=None):
         if output_transform != None:
             frame = output_transform.resize(frame)
         boxes = info["detections"][0]
-        for box in boxes:
+        for ind, box in enumerate(boxes):
             axis = output_transform.scale([box[0], box[1], box[2], box[3]])
             xmin, ymin, xmax, ymax = edge_process(axis, frame.shape[:-1])
             if draw_key:
-                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), palette[class_id], 2)
+                cv2.rectangle(frame, (xmin, ymin), (xmax, ymax), palette[class_id], 5)
+                if len(names) > 0:
+                    cv2.putText(frame, '{}'.format(names[ind]),
+                                        (xmin, ymin - 7), cv2.FONT_HERSHEY_COMPLEX, 0.8, palette[-1], 2)
             else:
                 pieces.append(frame[ymin:ymax,xmin:xmax])
 

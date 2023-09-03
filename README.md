@@ -58,7 +58,7 @@ python3 facial_recognition.py -c config/config.json
     <summary> Show inference result
     </summary>
       <div align="center">
-        <img width="80%" height="80%" src="data/">
+        <img width="30%" height="30%" src="data/result.png">
       </div>
 </details>
 

@@ -43,6 +43,9 @@ def main(args):
         if key in {ord('q'), ord('Q'), ESC_KEY}:
             break
 
+    cv2.destroyAllWindows()
+    sys.exit(0)
+
 if __name__ == '__main__':
     config_logger('./openvino_face_detection.log', 'w', "info")
     parser = argparse.ArgumentParser()
